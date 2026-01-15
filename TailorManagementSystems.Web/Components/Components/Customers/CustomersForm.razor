@@ -1,0 +1,101 @@
+@namespace TailorManagementSystems.Web.Components
+@using TailorManagementSystems.Application.Interfaces.Customers
+@using TailorManagementSystems.Application.Models.Customers
+@inject ICustomerService CustomerService
+
+<EditForm Model="model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+        <div class="mb-3">
+            <label>Name</label>
+            <InputText class="form-control form-control-sm" @bind-Value="model.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+        <InputText class="form-control form-control-sm" @bind-Value="model.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label>Nomor Telp</label>
+        <InputText class="form-control form-control-sm" @bind-Value="model.PhoneNumber" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Jenis Kelamin</label>
+
+            <InputRadioGroup @bind-Value="model.Gender" class="d-flex gap-3">
+                <div class="form-check">
+                    <InputRadio class="form-check-input" Value="Gender.Pria" />
+                    <label class="form-check-label">Laki-laki</label>
+                </div>
+
+                <div class="form-check">
+                    <InputRadio class="form-check-input" Value="Gender.Wanita" />
+                    <label class="form-check-label">Perempuan</label>
+                </div>
+            </InputRadioGroup>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6 text-end">
+            <button class="btn btn-primary btn-sm">
+                @(IsEdit ? "Update" : "Create")
+            </button>
+            <a href="/customers" class="btn btn-light btn-sm">Back</a>
+            </div>
+        </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public EventCallback OnSuccess { get; set; }
+
+    private CustomerFormModel model = new();
+    private bool _isLoaded;
+    private bool IsEdit => Id.HasValue;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsEdit && !_isLoaded)
+        {
+            try
+            {
+                var result = await CustomerService.GetByIdAsync(Id.Value);
+                if (result != null && result.Success && result.Data != null)
+                {
+                    model = new CustomerFormModel
+                    {
+                        Name = result.Data.Name,
+                        Email = result.Data.Email,
+                        Gender = (TailorManagementSystems.Application.Models.Customers.Gender)result.Data.Gender,
+                        PhoneNumber = result.Data.PhoneNumber
+                    };
+                }
+            }
+            finally
+            {
+                _isLoaded = true;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            if (IsEdit)
+                await CustomerService.UpdateAsync(Id.Value, model);
+            else
+                await CustomerService.CreateAsync(model);
+
+            await OnSuccess.InvokeAsync();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}

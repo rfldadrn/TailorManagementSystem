@@ -1,0 +1,17 @@
+﻿@page "/"
+@inject TailorManagementSystems.Infrastructure.Test.DbHealthCheckService DbTest
+<PageTitle>Home</PageTitle>
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<p>Customer count: @count</p>
+@code {
+    int count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        count = await DbTest.CustomerCountAsync();
+    }
+}

@@ -1,0 +1,14 @@
+﻿@page "/agencies/edit/{Id:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+<h3>Edit Customer</h3>
+
+<CustomersForm Id="Id" OnSuccess="OnSuccess" />
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/agencies");
+    }
+}

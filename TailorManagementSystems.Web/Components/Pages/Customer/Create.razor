@@ -1,0 +1,14 @@
+﻿@page "/customers/create"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+
+<h3>Create Customer</h3>
+<CustomersForm OnSuccess="OnSuccess" />
+
+@code {
+    private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/customers");
+    }
+}
