@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TailorManagementSystems.Application.Common;
 using TailorManagementSystems.Application.Common.Pagination;
-using TailorManagementSystems.Application.DTO.Agency;
-using TailorManagementSystems.Application.Models.Agency;
+using TailorManagementSystems.Application.DTO.Item;
+using TailorManagementSystems.Application.Models.Item;
 
-namespace TailorManagementSystems.Application.Interfaces.Agency
+namespace TailorManagementSystems.Application.Interfaces.Item
 {
     public interface I_Item
     {

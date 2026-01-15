@@ -32,7 +32,7 @@ public static class DependencyInjection
         // ===============================
         services.AddScoped<DbHealthCheckService>();
         services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<IAgency, AgencyService>();
+        services.AddScoped<I_Item, AgencyService>();
 
         return services;
     }

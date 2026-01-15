@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TailorManagementSystems.Application.DTO.Agency
+namespace TailorManagementSystems.Application.DTO.Item
 {
     public class ItemDTO
     {
@@ -14,9 +14,7 @@ namespace TailorManagementSystems.Application.DTO.Agency
 
         public string? Description { get; set; }
 
-        public DateOnly? StartDate { get; set; }
-
-        public DateOnly? TargetDate { get; set; }
+        public decimal? CustomerPrice { get; set; }
 
         public sbyte? RowStatus { get; set; }
     }

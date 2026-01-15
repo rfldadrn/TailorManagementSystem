@@ -1,17 +1,17 @@
-﻿@page "/agencies"
+﻿@page "/items"
 @rendermode InteractiveServer
-@inject ILogger<Agencies> Logger
-@inject I_Item AgenciesService
+@inject ILogger<Items> Logger
+@inject I_Item ItemService
 @using TailorManagementSystems.Application.Common
 @using TailorManagementSystems.Application.Common.Pagination
-@using TailorManagementSystems.Application.DTO.Agency
+@using TailorManagementSystems.Application.DTO.Item
 @using TailorManagementSystems.Application.Interfaces
-@using TailorManagementSystems.Application.Interfaces.Agency
+@using TailorManagementSystems.Application.Interfaces.Item
 @using TailorManagementSystems.Application.Models
 @using TailorManagementSystems.Infrastructure.Persistence.Scaffold
 @using TailorManagementSystems.Infrastructure.Services
 
-<h3 class="mb-3">Data Instansi</h3>
+<h3 class="mb-3">Data Item</h3>
 @if (response == null)
 {
     <p>Loading...</p>
@@ -28,12 +28,12 @@ else
         <div class="col-md-2 mb-2">
             <input type="text"
                    class="form-control form-control-sm"
-                   placeholder="Cari instansi..."
+                   placeholder="Cari item..."
                    value="@searchText"
                    @oninput="OnSearchChanged" />
         </div>
         <div class="col-md-10 text-end">
-            <a href="/agencies/create" class="btn btn-primary btn-sm">Tambah Instansi</a>
+            <a href="/items/create" class="btn btn-primary btn-sm">Tambah Item</a>
         </div>
     </div>
     <div class="table-responsive">
@@ -59,14 +59,10 @@ else
                         <tr @key="@c.Id">
                             <td class="fw-semibold">@c.Name</td>
                             <td>@c.Description</td>
+                            <td>@c.CustomerPrice</td>
+                            <td>@c.RowStatus</td>
                             <td>
-                                @((c.StartDate?.ToString("dd MMMM yyyy")) ?? "-")
-                            </td>
-                            <td>
-                                @((c.TargetDate?.ToString("dd MMMM yyyy")) ?? "-")
-                            </td>
-                            <td>
-                                <a href="/agencies/edit/@c.Id"><i class="fa fa-edit"></i></a>
+                                <a href="/items/edit/@c.Id"><i class="fa fa-edit"></i></a>
                                 <a href="#"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
@@ -105,7 +101,7 @@ else
     {
         response = null;
         currentPage = page;
-        var result = await AgenciesService.GetAllAsync(new PagedRequest
+        var result = await ItemService.GetAllAsync(new PagedRequest
         {
             Page = currentPage,
             PageSize = pageSize,

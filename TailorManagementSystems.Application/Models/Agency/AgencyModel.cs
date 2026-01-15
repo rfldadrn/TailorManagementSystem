@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TailorManagementSystems.Application.Models.Agency
 {
-    public class AgencyModel
+    public class ItemModel
     {
         public int Id { get; set; }
 
