@@ -1,17 +1,17 @@
-﻿@page "/items"
+﻿@page "/itemManagements"
 @rendermode InteractiveServer
-@inject ILogger<Items> Logger
-@inject I_Item ItemService
+@inject ILogger<ItemManagements> Logger
+@inject I_ItemManagementService ItemManagementService
 @using TailorManagementSystems.Application.Common
 @using TailorManagementSystems.Application.Common.Pagination
-@using TailorManagementSystems.Application.DTO.Item
+@using TailorManagementSystems.Application.DTO.ItemManagement
 @using TailorManagementSystems.Application.Interfaces
-@using TailorManagementSystems.Application.Interfaces.Item
+@using TailorManagementSystems.Application.Interfaces.ItemManagement
 @using TailorManagementSystems.Application.Models
 @using TailorManagementSystems.Infrastructure.Persistence.Scaffold
 @using TailorManagementSystems.Infrastructure.Services
 
-<h3 class="mb-3">Data Item</h3>
+<h3 class="mb-3">Data Item Management</h3>
 @if (response == null)
 {
     <p>Loading...</p>
@@ -28,22 +28,22 @@ else
         <div class="col-md-2 mb-2">
             <input type="text"
                    class="form-control form-control-sm"
-                   placeholder="Cari item..."
+                   placeholder="Cari item management..."
                    value="@searchText"
                    @oninput="OnSearchChanged" />
         </div>
         <div class="col-md-10 text-end">
-            <a href="/items/create" class="btn btn-primary btn-sm">Tambah Item</a>
+            <a href="/itemManagements/create" class="btn btn-primary btn-sm">Tambah Item</a>
         </div>
     </div>
     <div class="table-responsive">
         <table class="table table-hover table-striped align-middle shadow-sm">
             <thead class="table-dark text-uppercase small">
                 <tr>
-                    <th>Nama Instansi</th>
+                    <th>Nama Items </th>
                     <th>Deskripsi</th>
-                    <th>Tanggal Masuk</th>
-                    <th>Tanggal Selesai</th>
+                    <th>Customer Price</th>
+                    <th>Row Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -59,10 +59,10 @@ else
                         <tr @key="@c.Id">
                             <td class="fw-semibold">@c.Name</td>
                             <td>@c.Description</td>
-                            <td>@c.CustomerPrice</td>
+                            <td>Rp.@c.CustomerPrice</td>
                             <td>@c.RowStatus</td>
                             <td>
-                                <a href="/items/edit/@c.Id"><i class="fa fa-edit"></i></a>
+                                <a href="/itemManagements/edit/@c.Id"><i class="fa fa-edit"></i></a>
                                 <a href="#"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
@@ -86,7 +86,7 @@ else
 }
 
 @code {
-    private Response<PagedResult<ItemDTO>>? response;
+    private Response<PagedResult<ItemManagementDTO>>? response;
     private int currentPage = 1;
     private int pageSize = 10;
     private string? searchText;
@@ -101,7 +101,7 @@ else
     {
         response = null;
         currentPage = page;
-        var result = await ItemService.GetAllAsync(new PagedRequest
+        var result = await ItemManagementService.GetAllAsync(new PagedRequest
         {
             Page = currentPage,
             PageSize = pageSize,

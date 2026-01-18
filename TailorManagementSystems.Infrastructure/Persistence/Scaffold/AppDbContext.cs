@@ -26,7 +26,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Employeetype> Employeetypes { get; set; }
 
-    public virtual DbSet<Item> Items { get; set; }
+    public virtual DbSet<ItemManagement> ItemManagements { get; set; }
 
     public virtual DbSet<Itememployeefee> Itememployeefees { get; set; }
 
@@ -163,7 +163,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnType("tinyint(4)");
         });
 
-        modelBuilder.Entity<Item>(entity =>
+        modelBuilder.Entity<ItemManagement>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 

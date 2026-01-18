@@ -13,7 +13,7 @@ public partial class Itemsize
 
     public sbyte? RowStatus { get; set; }
 
-    public virtual Item Item { get; set; } = null!;
+    public virtual ItemManagement Item { get; set; } = null!;
 
     public virtual ICollection<Itemsizecustomer> Itemsizecustomers { get; set; } = new List<Itemsizecustomer>();
 }

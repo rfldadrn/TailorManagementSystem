@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TailorManagementSystems.Application.Interfaces.Agency;
 using TailorManagementSystems.Application.Interfaces.Customers;
+using TailorManagementSystems.Application.Interfaces.ItemManagement;
 using TailorManagementSystems.Infrastructure.Persistence.Scaffold;
 using TailorManagementSystems.Infrastructure.Services;
 using TailorManagementSystems.Infrastructure.Test;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<DbHealthCheckService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<I_Item, AgencyService>();
+        services.AddScoped<I_ItemManagementService, ItemManagementsService>();
 
         return services;
     }

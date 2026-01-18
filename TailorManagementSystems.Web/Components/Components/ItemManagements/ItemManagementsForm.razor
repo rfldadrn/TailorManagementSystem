@@ -1,0 +1,89 @@
+@namespace TailorManagementSystems.Web.Components
+@using TailorManagementSystems.Application.Interfaces.ItemManagement
+@using TailorManagementSystems.Application.Models.ItemManagement
+@inject I_ItemManagementService ItemManagementService
+
+<EditForm Model="model" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label>Name</label>
+        <InputText class="form-control form-control-sm" @bind-Value="model.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label>Description</label>
+        <InputText class="form-control form-control-sm" @bind-Value="model.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label>Customer Price</label>
+        <InputNumber class="form-control form-control-sm" @bind-Value="model.CustomerPrice" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Row Status</label>
+        <InputNumber class="form-control form-control-sm" @bind-Value="model.RowStatus" typeof="nullable" />
+    </div>
+
+    <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary btn-sm" type="submit">
+                @(IsEdit ? "Update" : "Create")
+            </button>
+            <a href="/customers" class="btn btn-light btn-sm">Back</a>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    [Parameter] public EventCallback OnSuccess { get; set; }
+
+    private ItemManagementModel model = new();
+    private bool _isLoaded;
+    private bool IsEdit => Id.HasValue;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsEdit && !_isLoaded)
+        {
+            try
+            {
+                var result = await ItemManagementService.GetByIdAsync(Id.Value);
+                if (result != null && result.Success && result.Data != null)
+                {
+                    model = new ItemManagementModel
+                    {
+                        Name = result.Data.Name,
+                        Description = result.Data.Description,
+                        CustomerPrice = result.Data.CustomerPrice,
+                        RowStatus = result.Data.RowStatus,
+                    };
+                }
+            }
+            finally
+            {
+                _isLoaded = true;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            if (IsEdit)
+                await ItemManagementService.UpdateAsync(Id.Value, model);
+            else
+                await ItemManagementService.CreateAsync(model);
+
+            await OnSuccess.InvokeAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+}

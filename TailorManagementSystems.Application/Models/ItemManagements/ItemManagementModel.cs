@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TailorManagementSystems.Application.Models.Item
+namespace TailorManagementSystems.Application.Models.ItemManagement
 {
-    public class ItemModel
+    public class ItemManagementModel
     {
         public int Id { get; set; }
 
@@ -16,6 +16,6 @@ namespace TailorManagementSystems.Application.Models.Item
 
         public decimal? CustomerPrice { get; set; }
 
-        public sbyte? RowStatus { get; set; }
+        public int? RowStatus { get; set; }
     }
 }

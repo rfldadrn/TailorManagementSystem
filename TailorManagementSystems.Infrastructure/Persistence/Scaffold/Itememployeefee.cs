@@ -19,5 +19,5 @@ public partial class Itememployeefee
 
     public virtual ICollection<Employeetask> Employeetasks { get; set; } = new List<Employeetask>();
 
-    public virtual Item Item { get; set; } = null!;
+    public virtual ItemManagement Item { get; set; } = null!;
 }
