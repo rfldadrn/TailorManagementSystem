@@ -10,17 +10,22 @@ namespace TailorManagementSystems.Infrastructure.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly AppDbContext _context;
+        private readonly IDbContextFactory<AppDbContext> _factory;
 
-        public CustomerService(AppDbContext context)
+        public CustomerService(IDbContextFactory<AppDbContext> factory)
         {
-            _context = context;
+            _factory = factory;
         }
 
         public async Task<Response<bool>> CreateAsync(CustomerFormModel customer)
         {
-            if (string.IsNullOrWhiteSpace(customer.Name))
-                return Response<bool>.Fail("Customer name canot be empty!");
+            using var _context = _factory.CreateDbContext();
+            var existingCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c =>
+                    c.Email == customer.Email && c.RowStatus == true);
+
+            if (existingCustomer != null)
+                return Response<bool>.Fail("Email sudah digunakan!");
 
             var entity = new Customer
             {
@@ -28,7 +33,7 @@ namespace TailorManagementSystems.Infrastructure.Services
                 Email = customer.Email,
                 Gender = customer.Gender,
                 PhoneNumber = customer.PhoneNumber,
-                RowStatus = 1
+                RowStatus = true
             };
 
             _context.Customers.Add(entity);
@@ -39,6 +44,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<bool>> DeleteAsync(int Id)
         {
+            using var _context = _factory.CreateDbContext();
             var entity = await _context.Customers.FindAsync(Id);
             if (entity == null)
                 return Response<bool>.Fail("Customer not found!");
@@ -51,6 +57,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<PagedResult<CustomerDTO>>> GetAllAsync(PagedRequest request)
         {
+            using var _context = _factory.CreateDbContext();
             var query = _context.Customers.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
@@ -70,8 +77,9 @@ namespace TailorManagementSystems.Infrastructure.Services
                 Id = c.Id,
                 Name = c.Name,
                 Email = c.Email,
-                Gender = (Application.DTO.Customers.Gender)c.Gender,
+                Gender = c.Gender,
                 PhoneNumber = c.PhoneNumber,
+                RowStatus = c.RowStatus // Map RowStatus here
             })
             .ToListAsync();
 
@@ -88,6 +96,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<CustomerDTO?>> GetByIdAsync(int Id)
         {
+            using var _context = _factory.CreateDbContext();
             var entity = await _context.Customers.FindAsync(Id);
             if (entity == null)
                 return Response<CustomerDTO?>.Fail("Customer tidak ditemukan");
@@ -97,16 +106,26 @@ namespace TailorManagementSystems.Infrastructure.Services
                 Id = entity.Id,
                 Name = entity.Name,
                 Email = entity.Email,
-                Gender = (TailorManagementSystems.Application.DTO.Customers.Gender)entity.Gender,
+                Gender = entity.Gender,
                 PhoneNumber = entity.PhoneNumber,
+                RowStatus = entity.RowStatus // Map RowStatus here
             });
         }
 
         public async Task<Response<bool>> UpdateAsync(int Id,CustomerFormModel customer)
         {
-            var entity = await _context.Customers.FindAsync(customer.Id);
+            using var _context = _factory.CreateDbContext();
+            var entity = await _context.Customers.FindAsync(Id);
             if (entity == null)
-                return Response<bool>.Fail("Customer tidak ditemukan");
+                return Response<bool>.Fail("Customer tidak ditemukan!");
+            
+            var existingCustomer = await _context.Customers
+                .FirstOrDefaultAsync(c => c.Id != Id &&
+                c.Email == customer.Email && c.RowStatus == true);
+            
+            if (existingCustomer != null)
+                return Response<bool>.Fail("Email sudah digunakan!");
+
 
             entity.Name = customer.Name;
             entity.Email = customer.Email;

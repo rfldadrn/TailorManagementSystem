@@ -7,7 +7,7 @@
 
 @code {
     [Parameter] public int Id { get; set; }
-    private void OnSuccess()
+    async private void OnSuccess()
     {
         NavigationManager.NavigateTo("/customers");
     }

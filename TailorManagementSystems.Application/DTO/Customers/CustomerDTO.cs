@@ -13,13 +13,13 @@ namespace TailorManagementSystems.Application.DTO.Customers
 
         public string Name { get; set; } = null!;
 
-        public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; } = string.Empty;
 
         public string? Email { get; set; }
 
-        public Gender Gender { get; set; }
+        public string? Gender { get; set; }
 
-        public sbyte? RowStatus { get; set; }
+        public bool? RowStatus { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
     }
