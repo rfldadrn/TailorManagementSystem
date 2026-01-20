@@ -1,4 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using TailorManagementSystems.Application.DTO.Menus
+@using TailorManagementSystems.Application.Interfaces.Menus
+@using TailorManagementSystems.Infrastructure.Services
+@inject IMenu MenuServices
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CV. Dunia Busana</a>
     </div>
@@ -46,3 +51,13 @@
     </nav>
 </div>
 
+@code {
+    private List<MenuDTO> response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData() => response = await MenuServices.GetAllAsync();
+}

@@ -18,6 +18,6 @@ namespace TailorManagementSystems.Application.Models.Agency
 
         public DateOnly? TargetDate { get; set; }
 
-        public sbyte? RowStatus { get; set; }
+        public bool? RowStatus { get; set; }
     }
 }
