@@ -15,7 +15,7 @@ public partial class Agency
 
     public DateOnly? TargetDate { get; set; }
 
-    public sbyte? RowStatus { get; set; }
+    public bool? RowStatus { get; set; }
 
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }

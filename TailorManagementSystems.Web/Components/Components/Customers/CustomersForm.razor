@@ -1,24 +1,29 @@
 @namespace TailorManagementSystems.Web.Components
+@using TailorManagementSystems.Application.Common
 @using TailorManagementSystems.Application.Interfaces.Customers
 @using TailorManagementSystems.Application.Models.Customers
 @inject ICustomerService CustomerService
+@inject SweetAlertService Alert
 
 <EditForm Model="model" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    @* <ValidationSummary /> *@
         <div class="mb-3">
             <label>Name</label>
             <InputText class="form-control form-control-sm" @bind-Value="model.Name" />
+            <ValidationMessage For="@(() => model.Name)" />
         </div>
 
         <div class="mb-3">
             <label>Email</label>
         <InputText class="form-control form-control-sm" @bind-Value="model.Email" />
+        <ValidationMessage For="@(() => model.Email)" />
         </div>
 
         <div class="mb-3">
             <label>Nomor Telp</label>
         <InputText class="form-control form-control-sm" @bind-Value="model.PhoneNumber" />
+        <ValidationMessage For="@(() => model.PhoneNumber)" />
         </div>
 
         <div class="mb-3">
@@ -70,7 +75,7 @@
                     {
                         Name = result.Data.Name,
                         Email = result.Data.Email,
-                        Gender = (TailorManagementSystems.Application.Models.Customers.Gender)result.Data.Gender,
+                        Gender = result.Data.Gender,
                         PhoneNumber = result.Data.PhoneNumber
                     };
                 }
@@ -84,18 +89,26 @@
 
     private async Task HandleSubmit()
     {
+        Response<bool> result;
         try
         {
             if (IsEdit)
-                await CustomerService.UpdateAsync(Id.Value, model);
+                result = await CustomerService.UpdateAsync(Id.Value, model);
             else
-                await CustomerService.CreateAsync(model);
+                result = await CustomerService.CreateAsync(model);
 
+            if(!result.Success)
+            {
+                await Alert.ShowAlert("Gagal", result.Message, "error");
+                return;
+            }
+
+            await Alert.ShowAlert("Berhasil", "Data berhasil disimpan", "success");
             await OnSuccess.InvokeAsync();
         }
         catch(Exception e)
         {
-            Console.WriteLine(e.Message);
+            await Alert.ShowAlert("Sistem Error", e.Message, "error");
         }
     }
 }

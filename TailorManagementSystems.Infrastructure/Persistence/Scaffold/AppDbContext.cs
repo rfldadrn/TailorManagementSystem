@@ -36,6 +36,8 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Mappingrole> Mappingroles { get; set; }
 
+    public virtual DbSet<Menu> Menus { get; set; }
+
     public virtual DbSet<Paymenttype> Paymenttypes { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
@@ -47,9 +49,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Transactionitem> Transactionitems { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySql("server=localhost;port=3306;database=TailorManagementSystems;user=root", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.4.32-mariadb"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,8 +66,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Customer>(entity =>
@@ -77,14 +75,13 @@ public partial class AppDbContext : DbContext
 
             entity.ToTable("customer");
 
-            entity.Property(e => e.Id).HasColumnType("int(11)");
-            entity.Property(e => e.Email).HasMaxLength(100);
-            entity.Property(e => e.Gender).HasColumnType("enum('Pria','Wanita')");
-            entity.Property(e => e.Name).HasMaxLength(100);
-            entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Email).HasMaxLength(100);
+                entity.Property(e => e.Gender).HasMaxLength(10);
+                entity.Property(e => e.Name).HasMaxLength(100);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -104,8 +101,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
 
             entity.HasOne(d => d.EmployeeType).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.EmployeeTypeId)
@@ -131,8 +127,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.ItemEmployeeFeeId).HasColumnType("int(11)");
             entity.Property(e => e.Note).HasColumnType("text");
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
             entity.Property(e => e.TransactionItemId).HasColumnType("int(11)");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.Employeetasks)
@@ -159,8 +154,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Item>(entity =>
@@ -174,8 +168,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Itememployeefee>(entity =>
@@ -193,8 +186,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Fee).HasPrecision(10, 2);
             entity.Property(e => e.ItemId).HasColumnType("int(11)");
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
 
             entity.HasOne(d => d.EmployeeType).WithMany(p => p.Itememployeefees)
                 .HasForeignKey(d => d.EmployeeTypeId)
@@ -217,8 +209,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.ItemId).HasColumnType("int(11)");
             entity.Property(e => e.Name).HasMaxLength(50);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
 
             entity.HasOne(d => d.Item).WithMany(p => p.Itemsizes)
                 .HasForeignKey(d => d.ItemId)
@@ -236,8 +227,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.ItemSizeId).HasColumnType("int(11)");
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
             entity.Property(e => e.Value).HasMaxLength(100);
 
             entity.HasOne(d => d.ItemSize).WithMany(p => p.Itemsizecustomers)
@@ -258,8 +248,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.RoleId).HasColumnType("int(11)");
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
             entity.Property(e => e.UserId).HasColumnType("int(11)");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Mappingroles)
@@ -269,6 +258,57 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Mappingroles)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("mappingrole_ibfk_2");
+        });
+
+        modelBuilder.Entity<Menu>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("menus");
+
+            entity.HasIndex(e => e.OrderPosition, "idx_order_position");
+
+            entity.HasIndex(e => e.ParentId, "idx_parent_id");
+
+            entity.HasIndex(e => e.Slug, "slug").IsUnique();
+
+            entity.Property(e => e.Id)
+                .HasColumnType("int(11)")
+                .HasColumnName("id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("current_timestamp()")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Icon)
+                .HasMaxLength(50)
+                .HasColumnName("icon");
+            entity.Property(e => e.RowStatus)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("RowStatus");
+            entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .HasColumnName("name");
+            entity.Property(e => e.OrderPosition)
+                .HasDefaultValueSql("'0'")
+                .HasColumnType("int(11)")
+                .HasColumnName("order_position");
+            entity.Property(e => e.ParentId)
+                .HasColumnType("int(11)")
+                .HasColumnName("parent_id");
+            entity.Property(e => e.Slug)
+                .HasMaxLength(100)
+                .HasColumnName("slug");
+            entity.Property(e => e.UpdatedAt)
+                .ValueGeneratedOnAddOrUpdate()
+                .HasDefaultValueSql("current_timestamp()")
+                .HasColumnName("updated_at");
+            entity.Property(e => e.Url)
+                .HasMaxLength(255)
+                .HasColumnName("url");
+
+            entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
+                .HasForeignKey(d => d.ParentId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("menus_ibfk_1");
         });
 
         modelBuilder.Entity<Paymenttype>(entity =>
@@ -281,8 +321,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -295,8 +334,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Statustransaction>(entity =>
@@ -309,8 +347,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Description).HasColumnType("text");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         modelBuilder.Entity<Transaction>(entity =>
@@ -390,8 +427,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.ItemSizeCustomerId).HasColumnType("int(11)");
             entity.Property(e => e.Note).HasColumnType("text");
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
             entity.Property(e => e.StatusTransactionId).HasColumnType("int(11)");
             entity.Property(e => e.TransactionId).HasColumnType("int(11)");
 
@@ -428,8 +464,7 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.RowStatus)
-                .HasDefaultValueSql("'1'")
-                .HasColumnType("tinyint(4)");
+                .HasDefaultValueSql("1");
         });
 
         OnModelCreatingPartial(modelBuilder);
