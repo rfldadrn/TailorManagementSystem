@@ -1,7 +1,8 @@
 ﻿@page "/agencies"
 @rendermode InteractiveServer
 @inject ILogger<Agencies> Logger
-@inject I_Item AgenciesService
+@inject IAgency AgenciesService
+@inject SweetAlertService Alert
 @using TailorManagementSystems.Application.Common
 @using TailorManagementSystems.Application.Common.Pagination
 @using TailorManagementSystems.Application.DTO.Agency
@@ -48,13 +49,13 @@ else
                 </tr>
             </thead>
             <tbody>
-                @if (response.Data.TotalItems == 0)
+            @if (response.Data.TotalItems == 0)
                 {
                     <tr><td colspan="5">Data tidak ditemukan...</td></tr>
                 }
                 else
                 {
-                    @foreach (var c in response.Data.Items)
+                    @foreach (AgencyDTO c in response.Data.Items)
                     {
                         <tr @key="@c.Id">
                             <td class="fw-semibold">@c.Name</td>
@@ -67,7 +68,7 @@ else
                             </td>
                             <td>
                                 <a href="/agencies/edit/@c.Id"><i class="fa fa-edit"></i></a>
-                                <a href="#"><i class="fa fa-trash"></i></a>
+                                <a href="#" @onclick="() => Delete(c.Id)"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
                     }
@@ -75,22 +76,22 @@ else
             </tbody>
         </table>
         <ul class="pagination" @key="response.Data.Page">
-            @for (int i = 1; i <= response?.Data?.TotalPages; i++)
+        
+        @for (int i = 1; i <= response?.Data?.TotalPages; i++)
             {
                 var pageNumber = i;
-                <li class="page-item @(i == currentPage ? "active" : "")">
-                    <button type="button" class="page-link" @onclick="() => LoadPage(pageNumber)">
-                        @i
-                    </button>
-                </li>
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <button type="button" class="page-link" @onclick="() => LoadPage(pageNumber)">
+                            @i
+                        </button>
+                    </li>
             }
-        </ul>
-        <p>Page @currentPage of @response?.Data.TotalPages</p>
-    </div>
+            </ul>
+            <p>Page @currentPage of @response?.Data.TotalPages</p>
+        </div>
 }
-
 @code {
-    private Response<PagedResult<ItemDTO>>? response;
+    private Response<PagedResult<AgencyDTO>>? response;
     private int currentPage = 1;
     private int pageSize = 10;
     private string? searchText;
@@ -134,4 +135,25 @@ else
             // Ignore cancellation
         }
     }
+
+    private async Task Delete(int id)
+    {
+        if (!await Alert.Confirm("Hapus Data", "Apakah Anda yakin ingin menghapus pelanggan ini?"))
+            return;
+
+        var result = await AgenciesService.DeleteAsync(id);
+
+        if (!result.Success)
+        {
+            await Alert.Error("Gagal", result.Message);
+            return;
+        }
+
+        await Alert.Success("Berhasil", result.Message);
+
+        await LoadPage(currentPage);
+    }
+    
+
+
 }

@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.Design;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TailorManagementSystems.Application.Interfaces.Agency;
 using TailorManagementSystems.Application.Interfaces.Customers;
 using TailorManagementSystems.Application.Interfaces.ItemManagement;
+using TailorManagementSystems.Application.Interfaces.Menus;
 using TailorManagementSystems.Infrastructure.Persistence.Scaffold;
 using TailorManagementSystems.Infrastructure.Services;
 using TailorManagementSystems.Infrastructure.Services.Sweetalert;
@@ -17,18 +19,27 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Default");
+        var connectionString =
+            configuration.GetConnectionString("Default");
+
         services.AddDbContextFactory<AppDbContext>(options =>
-            options.UseSqlServer(connectionString)
+            options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString)
+            )
         );
+
         // ===============================
         // REGISTRATION SERVICES
         // ===============================
         services.AddScoped<DbHealthCheckService>();
         services.AddScoped<SweetAlertService>();
         services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IAgency, AgencyService>();
         services.AddScoped<I_ItemManagementService, ItemManagementsService>();
+        services.AddScoped<IMenu, MenuService>();
 
         return services;
     }
+
 }

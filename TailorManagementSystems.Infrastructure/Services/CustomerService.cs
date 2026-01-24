@@ -44,15 +44,28 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<bool>> DeleteAsync(int Id)
         {
-            using var _context = _factory.CreateDbContext();
-            var entity = await _context.Customers.FindAsync(Id);
-            if (entity == null)
-                return Response<bool>.Fail("Customer not found!");
+            try
+            {
+                using var _context = _factory.CreateDbContext();
+                var entity = await _context.Customers.FindAsync(Id);
+                if (entity == null)
+                    return Response<bool>.Fail("Customer not found!");
 
-            _context.Customers.Remove(entity);
-            await _context.SaveChangesAsync();
+                _context.Customers.Remove(entity);
+                await _context.SaveChangesAsync();
 
-            return Response<bool>.Ok(true, "Delete customer sucessfully!");
+
+                return Response<bool>.Ok(true, "Delete customer sucessfully!");
+            }
+
+            catch (System.Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return Response<bool>.Fail(e.Message);
+            }
+
+
+
         }
 
         public async Task<Response<PagedResult<CustomerDTO>>> GetAllAsync(PagedRequest request)
@@ -63,7 +76,7 @@ namespace TailorManagementSystems.Infrastructure.Services
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var keyword = request.Search.Trim();
-                query = query.Where(c => 
+                query = query.Where(c =>
                     c.Name.Contains(keyword) ||
                     c.Email.Contains(keyword) ||
                     c.PhoneNumber.Contains(keyword));
@@ -73,14 +86,14 @@ namespace TailorManagementSystems.Infrastructure.Services
             var customers = await query.OrderBy(c => c.Name).Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Select(c => new CustomerDTO
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Email = c.Email,
-                Gender = c.Gender,
-                PhoneNumber = c.PhoneNumber,
-                RowStatus = c.RowStatus // Map RowStatus here
-            })
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Email = c.Email,
+                    Gender = c.Gender,
+                    PhoneNumber = c.PhoneNumber,
+                    RowStatus = c.RowStatus // Map RowStatus here
+                })
             .ToListAsync();
 
             var result = new PagedResult<CustomerDTO>
@@ -112,17 +125,17 @@ namespace TailorManagementSystems.Infrastructure.Services
             });
         }
 
-        public async Task<Response<bool>> UpdateAsync(int Id,CustomerFormModel customer)
+        public async Task<Response<bool>> UpdateAsync(int Id, CustomerFormModel customer)
         {
             using var _context = _factory.CreateDbContext();
             var entity = await _context.Customers.FindAsync(Id);
             if (entity == null)
                 return Response<bool>.Fail("Customer tidak ditemukan!");
-            
+
             var existingCustomer = await _context.Customers
                 .FirstOrDefaultAsync(c => c.Id != Id &&
                 c.Email == customer.Email && c.RowStatus == true);
-            
+
             if (existingCustomer != null)
                 return Response<bool>.Fail("Email sudah digunakan!");
 
