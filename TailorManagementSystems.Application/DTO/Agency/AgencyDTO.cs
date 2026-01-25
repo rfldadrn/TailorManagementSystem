@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TailorManagementSystems.Application.DTO.Agency
 {
-    public class ItemDTO
+    public class AgencyDTO
     {
         public int Id { get; set; }
 

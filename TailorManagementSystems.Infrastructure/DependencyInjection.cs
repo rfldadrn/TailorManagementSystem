@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.Design;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TailorManagementSystems.Application.Interfaces.Agency;
@@ -18,10 +19,16 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("Default");
+        var connectionString =
+            configuration.GetConnectionString("Default");
+
         services.AddDbContextFactory<AppDbContext>(options =>
-            options.UseSqlServer(connectionString)
+            options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString)
+            )
         );
+
         // ===============================
         // REGISTRATION SERVICES
         // ===============================
@@ -34,4 +41,5 @@ public static class DependencyInjection
 
         return services;
     }
+
 }

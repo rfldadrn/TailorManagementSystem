@@ -57,7 +57,7 @@ namespace TailorManagementSystems.Infrastructure.Services
             return Response<bool>.Ok(true, "Delete agency sucessfully!");
         }
 
-        public async Task<Response<PagedResult<ItemDTO>>> GetAllAsync(PagedRequest request)
+        public async Task<Response<PagedResult<AgencyDTO>>> GetAllAsync(PagedRequest request)
         {
             using var _context = _factory.CreateDbContext();
             var query = _context.Agencies.AsNoTracking();
@@ -73,7 +73,7 @@ namespace TailorManagementSystems.Infrastructure.Services
             var totalItems = await query.CountAsync();
             var agencies = await query.OrderBy(c => c.Name).Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Select(c => new ItemDTO
+                .Select(c => new AgencyDTO
                 {
                     Id = c.Id,
                     Name = c.Name,
@@ -84,7 +84,7 @@ namespace TailorManagementSystems.Infrastructure.Services
                 })
             .ToListAsync();
 
-            var result = new PagedResult<ItemDTO>
+            var result = new PagedResult<AgencyDTO>
             {
                 Items = agencies,
                 Page = request.Page,
@@ -92,17 +92,17 @@ namespace TailorManagementSystems.Infrastructure.Services
                 TotalItems = totalItems
             };
 
-            return Response<PagedResult<ItemDTO>>.Ok(result);
+            return Response<PagedResult<AgencyDTO>>.Ok(result);
         }
 
-        public async Task<Response<ItemDTO?>> GetByIdAsync(int Id)
+        public async Task<Response<AgencyDTO?>> GetByIdAsync(int Id)
         {
             using var _context = _factory.CreateDbContext();
             var entity = await _context.Agencies.FindAsync(Id);
             if (entity == null)
-                return Response<ItemDTO?>.Fail("Agency tidak ditemukan");
+                return Response<AgencyDTO?>.Fail("Agency tidak ditemukan");
 
-            return Response<ItemDTO?>.Ok(new ItemDTO
+            return Response<AgencyDTO?>.Ok(new AgencyDTO
             {
                 Id = entity.Id,
                 Name = entity.Name,
