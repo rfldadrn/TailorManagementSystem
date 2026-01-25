@@ -1,13 +1,7 @@
 ﻿@using TailorManagementSystems.Application.DTO.Menus
 @using TailorManagementSystems.Application.Interfaces.Menus
-@using TailorManagementSystems.Infrastructure.Services
-@inject IMenu MenuServices
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">CV. Dunia Busana</a>
-    </div>
-</div>
+@inject IMenu MenuServices
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
@@ -19,15 +13,25 @@
         }
         else
         {
-            @foreach(var menu in response)
+            @foreach (var menu in response)
             {
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="@menu.Url" Match="NavLinkMatch.All">
-                        <span class="@menu.Icon" aria-hidden="true"></span> @menu.Name  
+                        <span class="@menu.Icon" aria-hidden="true"></span> @menu.Name
                     </NavLink>
                 </div>
             }
-        } 
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="agencies">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Instansi
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="itemManagements">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Item Management
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
@@ -39,5 +43,8 @@
         await LoadData();
     }
 
-    private async Task LoadData() => response = await MenuServices.GetAllAsync();
+    private async Task LoadData()
+    {
+        response = await MenuServices.GetAllAsync();
+    }
 }

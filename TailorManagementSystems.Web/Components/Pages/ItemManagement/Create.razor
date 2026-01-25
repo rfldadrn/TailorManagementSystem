@@ -1,0 +1,14 @@
+﻿@page "/itemManagements/create"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+
+<h3>Create Item Management</h3>
+<ItemManagementsForm OnSuccess="OnSuccess" />
+
+@code {
+    private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/itemManagements");
+    }
+}

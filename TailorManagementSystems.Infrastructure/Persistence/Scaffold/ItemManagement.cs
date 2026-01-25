@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TailorManagementSystems.Infrastructure.Persistence.Scaffold;
 
-public partial class Item
+public partial class ItemManagement
 {
     public int Id { get; set; }
 

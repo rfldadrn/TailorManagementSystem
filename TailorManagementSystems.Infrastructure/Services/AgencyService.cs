@@ -23,7 +23,6 @@ namespace TailorManagementSystems.Infrastructure.Services
             _factory = factory;
         }
 
-
         public async Task<Response<bool>> CreateAsync(AgencyModel agency)
         {
             using var _context = _factory.CreateDbContext();
@@ -130,5 +129,10 @@ namespace TailorManagementSystems.Infrastructure.Services
 
             return Response<bool>.Ok(true, "Update customer successfully!");
         }
+
+        //public Task<Response<bool>> UpdateAsync(int Id, AgencyModel agency)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

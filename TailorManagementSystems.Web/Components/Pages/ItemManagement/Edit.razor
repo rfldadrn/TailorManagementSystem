@@ -1,0 +1,14 @@
+﻿@page "/itemManagements/edit/{Id:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+<h3>Edit Item Management</h3>
+
+<ItemManagementsForm Id="Id" OnSuccess="OnSuccess" />
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/itemManagements");
+    }
+}
