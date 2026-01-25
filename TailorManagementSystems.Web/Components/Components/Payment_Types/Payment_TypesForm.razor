@@ -1,40 +1,40 @@
 @namespace TailorManagementSystems.Web.Components
-@using TailorManagementSystems.Application.Interfaces.ItemManagement
-@using TailorManagementSystems.Application.Models.ItemManagement
+@using TailorManagementSystems.Application.Common
+@using TailorManagementSystems.Application.Interfaces.Payment_Types
+@using TailorManagementSystems.Application.Models.Payment_Types
 @using TailorManagementSystems.Infrastructure.Services.Sweetalert
-@inject I_ItemManagementService ItemManagementService
+@inject IPayment_TypeService Payment_TypeService
 @inject SweetAlertService Alert
 
 <EditForm Model="model" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
-    <ValidationSummary />
+    @* <ValidationSummary /> *@
     <div class="mb-3">
         <label>Name</label>
         <InputText class="form-control form-control-sm" @bind-Value="model.Name" />
+        <ValidationMessage For="@(() => model.Name)" />
     </div>
 
     <div class="mb-3">
         <label>Description</label>
         <InputText class="form-control form-control-sm" @bind-Value="model.Description" />
-    </div>
-
-    <div class="mb-3">
-        <label>Customer Price</label>
-        <InputNumber class="form-control form-control-sm" @bind-Value="model.CustomerPrice" />
+        <ValidationMessage For="@(() => model.Description)" />
     </div>
 
     <div class="mb-3">
         <label class="form-label">Row Status</label>
-        <InputNumber class="form-control form-control-sm" @bind-Value="model.RowStatus" typeof="nullable" />
+        <InputCheckbox class="form-check-input" @bind-Value="model.RowStatus" />
     </div>
+
+
 
     <div class="row">
         <div class="col-md-6"></div>
         <div class="col-md-6 text-end">
-            <button class="btn btn-primary btn-sm" type="submit">
+            <button class="btn btn-primary btn-sm">
                 @(IsEdit ? "Update" : "Create")
             </button>
-            <a href="/customers" class="btn btn-light btn-sm">Back</a>
+            <a href="/payment_types" class="btn btn-light btn-sm">Back</a>
         </div>
     </div>
 </EditForm>
@@ -43,7 +43,7 @@
     [Parameter] public int? Id { get; set; }
     [Parameter] public EventCallback OnSuccess { get; set; }
 
-    private ItemManagementModel model = new();
+    private Payment_TypeFormModel model = new();
     private bool _isLoaded;
     private bool IsEdit => Id.HasValue;
 
@@ -53,15 +53,13 @@
         {
             try
             {
-                var result = await ItemManagementService.GetByIdAsync(Id.Value);
+                var result = await Payment_TypeService.GetByIdAsync(Id.Value);
                 if (result != null && result.Success && result.Data != null)
                 {
-                    model = new ItemManagementModel
+                    model = new Payment_TypeFormModel
                     {
                         Name = result.Data.Name,
                         Description = result.Data.Description,
-                        CustomerPrice = result.Data.CustomerPrice,
-                        RowStatus = result.Data.RowStatus,
                     };
                 }
             }
@@ -74,18 +72,26 @@
 
     private async Task HandleSubmit()
     {
+        Response<bool> result;
         try
         {
             if (IsEdit)
-                await ItemManagementService.UpdateAsync(Id.Value, model);
+                result = await Payment_TypeService.UpdateAsync(Id.Value, model);
             else
-                await ItemManagementService.CreateAsync(model);
+                result = await Payment_TypeService.CreateAsync(model);
 
+            if (!result.Success)
+            {
+                await Alert.ShowAlert("Gagal", result.Message, "error");
+                return;
+            }
+
+            await Alert.ShowAlert("Berhasil", "Data berhasil disimpan", "success");
             await OnSuccess.InvokeAsync();
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            await Alert.ShowAlert("Sistem Error", e.Message, "error");
         }
     }
 }

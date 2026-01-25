@@ -1,0 +1,14 @@
+﻿@page "/Payment_Types/edit/{Id:int}"
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+<h3>Edit Payment Type</h3>
+
+<Payment_TypesForm Id="Id" OnSuccess="OnSuccess" />
+
+@code {
+    [Parameter] public int Id { get; set; }
+    async private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/payment_types");
+    }
+}

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TailorManagementSystems.Application.Interfaces.Agency;
 using TailorManagementSystems.Application.Interfaces.Customers;
 using TailorManagementSystems.Application.Interfaces.ItemManagement;
+using TailorManagementSystems.Application.Interfaces.Payment_Types;
 using TailorManagementSystems.Application.Interfaces.Menus;
 using TailorManagementSystems.Infrastructure.Persistence.Scaffold;
 using TailorManagementSystems.Infrastructure.Services;
@@ -38,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<IMenu, MenuService>();
         services.AddScoped<IAgency, AgencyService>();
         services.AddScoped<I_ItemManagementService, ItemManagementsService>();
+        services.AddScoped<IPayment_TypeService, Payment_TypeService>();
 
         return services;
     }

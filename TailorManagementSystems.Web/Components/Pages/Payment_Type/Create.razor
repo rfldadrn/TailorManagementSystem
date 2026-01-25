@@ -1,0 +1,15 @@
+﻿@page "/payment_types/create"
+@rendermode InteractiveServer
+
+@inject NavigationManager NavigationManager
+
+
+<h3>Create Payment Type</h3>
+<Payment_TypesForm OnSuccess="OnSuccess" />
+
+@code {
+    async private void OnSuccess()
+    {
+        NavigationManager.NavigateTo("/payment_types");
+    }
+}

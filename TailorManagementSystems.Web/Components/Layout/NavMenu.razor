@@ -1,12 +1,18 @@
 ﻿@using TailorManagementSystems.Application.DTO.Menus
 @using TailorManagementSystems.Application.Interfaces.Menus
-
 @inject IMenu MenuServices
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">CV. Dunia Busana</a>
+    </div>
+</div>
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
+
         @if (response == null)
         {
             <p>Loading...</p>
@@ -21,6 +27,23 @@
                     </NavLink>
                 </div>
             }
+            @* Menu Default *@
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu"></span> Dashboard
+                </NavLink>
+            </div>
+
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="counter">
+                    <span class="bi bi-list-nested-nav-menu"></span> Counter
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="customers">
+                    <span class="bi bi-list-nested-nav-menu"></span> Customer
+                </NavLink>
+            </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="agencies">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Instansi
@@ -31,13 +54,17 @@
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Item Management
                 </NavLink>
             </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="payment_types">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Payment Management
+                </NavLink>
+            </div>
         }
     </nav>
 </div>
 
 @code {
-    private List<MenuDTO> response;
-
+    private List<MenuDTO> response = new();
     protected override async Task OnInitializedAsync()
     {
         await LoadData();
@@ -47,4 +74,6 @@
     {
         response = await MenuServices.GetAllAsync();
     }
+
+
 }

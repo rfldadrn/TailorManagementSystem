@@ -64,8 +64,6 @@ namespace TailorManagementSystems.Infrastructure.Services
                 return Response<bool>.Fail(e.Message);
             }
 
-
-
         }
 
         public async Task<Response<PagedResult<CustomerDTO>>> GetAllAsync(PagedRequest request)
