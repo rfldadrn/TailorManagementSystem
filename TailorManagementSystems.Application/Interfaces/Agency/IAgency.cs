@@ -10,12 +10,12 @@ using TailorManagementSystems.Application.Models.Agency;
 
 namespace TailorManagementSystems.Application.Interfaces.Agency
 {
-    public interface I_Item
+    public interface IAgency
     {
         Task<Response<PagedResult<ItemDTO>>> GetAllAsync(PagedRequest request);
         Task<Response<ItemDTO?>> GetByIdAsync(int Id);
-        Task<Response<bool>> CreateAsync(ItemModel agency);
-        Task<Response<bool>> UpdateAsync(int Id, ItemModel agency);
+        Task<Response<bool>> CreateAsync(AgencyModel agency);
+        Task<Response<bool>> UpdateAsync(int Id, AgencyModel agency);
         Task<Response<bool>> DeleteAsync(int Id);
     }
 }

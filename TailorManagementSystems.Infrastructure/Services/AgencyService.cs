@@ -14,16 +14,18 @@ using TailorManagementSystems.Infrastructure.Persistence.Scaffold;
 
 namespace TailorManagementSystems.Infrastructure.Services
 {
-    public class AgencyService : I_Item
+    public class AgencyService : IAgency
     {
-        private readonly AppDbContext _context;
-        public AgencyService(AppDbContext context)
+        private readonly IDbContextFactory<AppDbContext> _factory;
+
+        public AgencyService(IDbContextFactory<AppDbContext> factory)
         {
-            _context = context;
+            _factory = factory;
         }
 
-        public async Task<Response<bool>> CreateAsync(ItemModel agency)
+        public async Task<Response<bool>> CreateAsync(AgencyModel agency)
         {
+            using var _context = _factory.CreateDbContext();
             if (string.IsNullOrWhiteSpace(agency.Name))
                 return Response<bool>.Fail("Agency name canot be empty!");
 
@@ -33,7 +35,7 @@ namespace TailorManagementSystems.Infrastructure.Services
                 Description = agency.Description,
                 StartDate = agency.StartDate,
                 TargetDate = agency.TargetDate,
-                RowStatus = 1
+                RowStatus = true
             };
 
             _context.Agencies.Add(entity);
@@ -44,6 +46,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<bool>> DeleteAsync(int Id)
         {
+            using var _context = _factory.CreateDbContext();
             var entity = await _context.Agencies.FindAsync(Id);
             if (entity == null)
                 return Response<bool>.Fail("Agency not found!");
@@ -56,6 +59,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<PagedResult<ItemDTO>>> GetAllAsync(PagedRequest request)
         {
+            using var _context = _factory.CreateDbContext();
             var query = _context.Agencies.AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(request.Search))
@@ -63,7 +67,7 @@ namespace TailorManagementSystems.Infrastructure.Services
                 var keyword = request.Search.Trim();
                 query = query.Where(c =>
                     c.Name.Contains(keyword) &&
-                    c.RowStatus == 1);
+                    c.RowStatus == true);
             }
 
             var totalItems = await query.CountAsync();
@@ -93,6 +97,7 @@ namespace TailorManagementSystems.Infrastructure.Services
 
         public async Task<Response<ItemDTO?>> GetByIdAsync(int Id)
         {
+            using var _context = _factory.CreateDbContext();
             var entity = await _context.Agencies.FindAsync(Id);
             if (entity == null)
                 return Response<ItemDTO?>.Fail("Agency tidak ditemukan");
@@ -108,8 +113,9 @@ namespace TailorManagementSystems.Infrastructure.Services
             });
         }
 
-        public async Task<Response<bool>> UpdateAsync(int Id, ItemModel agency)
+        public async Task<Response<bool>> UpdateAsync(int Id, AgencyModel agency)
         {
+            using var _context = _factory.CreateDbContext();
             var entity = await _context.Agencies.FindAsync(agency.Id);
             if (entity == null)
                 return Response<bool>.Fail("Agency tidak ditemukan");
@@ -123,5 +129,10 @@ namespace TailorManagementSystems.Infrastructure.Services
 
             return Response<bool>.Ok(true, "Update customer successfully!");
         }
+
+        //public Task<Response<bool>> UpdateAsync(int Id, AgencyModel agency)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

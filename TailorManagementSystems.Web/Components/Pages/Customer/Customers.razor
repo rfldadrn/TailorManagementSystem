@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject ILogger<Customer> Logger
 @inject ICustomerService CustomerService
+@inject SweetAlertService Alert
 @using TailorManagementSystems.Application.Common
 @using TailorManagementSystems.Application.Common.Pagination
 @using TailorManagementSystems.Application.DTO.Customers
@@ -11,6 +12,7 @@
 @using TailorManagementSystems.Application.Models.Customers
 @using TailorManagementSystems.Infrastructure.Persistence.Scaffold
 @using TailorManagementSystems.Infrastructure.Services
+@using TailorManagementSystems.Infrastructure.Services.Sweetalert
 
 <h3 class="mb-3">Data Pelanggan</h3>
 @if (response == null)
@@ -47,8 +49,8 @@ else if (!response.Success)
                 </tr>
             </thead>
             <tbody>
-                @if(response.Data.TotalItems == 0){
-                    <tr><td colspan="4">Data tidak ditemukan...</td></tr>
+                @if(response.Data?.TotalItems == 0){
+                    <tr><td colspan="5">Data tidak ditemukan...</td></tr>
                 }
                 else
                 {  
@@ -65,7 +67,12 @@ else if (!response.Success)
                             </td>
                             <td>
                                 <a href="/customers/edit/@c.Id"><i class="fa fa-edit"></i></a>
-                                <a href="#"><i class="fa fa-trash"></i></a>
+                                <button class="btn btn-link text-danger p-0"
+                                        title="Hapus"
+                                        @onclick="() => Delete(c.Id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+
                             </td>
                         </tr>
                     }
@@ -133,4 +140,23 @@ else if (!response.Success)
             // Ignore cancellation
         }
     }
+
+    private async Task Delete(int id)
+    {
+        if (!await Alert.Confirm("Hapus Data", "Apakah Anda yakin ingin menghapus pelanggan ini?"))
+            return;
+
+        var result = await CustomerService.DeleteAsync(id);
+
+        if (!result.Success)
+        {
+            await Alert.Error("Gagal", result.Message);
+            return;
+        }
+
+        await Alert.Success("Berhasil", result.Message);
+
+        await LoadPage(currentPage);
+    }
+
 }

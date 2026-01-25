@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TailorManagementSystems.Application.Models.Agency
 {
-    public class ItemModel
+    public class AgencyModel
     {
         public int Id { get; set; }
 
@@ -18,6 +18,6 @@ namespace TailorManagementSystems.Application.Models.Agency
 
         public DateOnly? TargetDate { get; set; }
 
-        public sbyte? RowStatus { get; set; }
+        public bool? RowStatus { get; set; }
     }
 }

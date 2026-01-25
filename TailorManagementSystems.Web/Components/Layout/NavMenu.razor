@@ -1,48 +1,50 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">CV. Dunia Busana</a>
-    </div>
-</div>
+﻿@using TailorManagementSystems.Application.DTO.Menus
+@using TailorManagementSystems.Application.Interfaces.Menus
+
+@inject IMenu MenuServices
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="customers">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Pelanggan
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="agencies">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Instansi
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="itemManagements">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Item Management
-            </NavLink>
-        </div>
+        @if (response == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            @foreach (var menu in response)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="@menu.Url" Match="NavLinkMatch.All">
+                        <span class="@menu.Icon" aria-hidden="true"></span> @menu.Name
+                    </NavLink>
+                </div>
+            }
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="agencies">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Instansi
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="itemManagements">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Item Management
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
+@code {
+    private List<MenuDTO> response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        response = await MenuServices.GetAllAsync();
+    }
+}
