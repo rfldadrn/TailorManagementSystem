@@ -11,7 +11,7 @@ public partial class Paymenttype
 
     public string? Description { get; set; }
 
-    public sbyte? RowStatus { get; set; }
+    public bool RowStatus { get; set; }
 
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 }
